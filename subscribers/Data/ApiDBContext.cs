@@ -16,6 +16,6 @@ namespace subscribers.Data
         // DbSets are used to be able to access all the data from 
         // the database tables. Without this, data can't be added or
         // sent to each table.
-        public DbSet<Subscriber> TodoItems { get; set; }   
+        public DbSet<Subscriber> Subscribers { get; set; }   
     }
 }

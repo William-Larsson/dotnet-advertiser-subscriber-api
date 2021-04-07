@@ -10,34 +10,34 @@ namespace subscribers.Models
     {
         [Key] // Primary key
         [Column("sub_subscriber_id")]
-        public int SubscriberId { get; set; }
+        public long SubscriberId { get; set; } // Prenumerationsnummer
 
         [Required]
         [Column("sub_personal_id")]
-        public int PersonalId { get; set; }
+        public long PersonalId { get; set; } // personnummer
 
         [Required]
         [Column("sub_first_name")]
-        public string Firstname { get; set; }
+        public string Firstname { get; set; } // förnamn
 
         [Required]
         [Column("sub_last_name")]
-        public string Lastname { get; set; }
+        public string Lastname { get; set; } // efternamn
 
         [Required]
         [Column("sub_distribution_address")]
-        public string DistributionAddress { get; set; }
+        public string DistributionAddress { get; set; } // utdelningsadress
 
         [Required]
         [Column("sub_zip_code")]
-        public string ZipCode { get; set; }
+        public string ZipCode { get; set; } // postnummer
 
         [Required]
         [Column("sub_city")]
-        public string City { get; set; }
+        public string City { get; set; } // ort
 
         [Required]
         [Column("sub_phone_number")]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } // telefonnummer
     }
 }

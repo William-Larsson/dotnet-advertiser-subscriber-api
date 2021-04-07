@@ -10,6 +10,7 @@ using subscribers.Models;
 
 namespace subscribers.Controllers
 {
+    // Controller class for processing the API-requests. 
     [Route("api/[controller]")]
     [ApiController]
     public class SubscriberController : ControllerBase
@@ -25,14 +26,15 @@ namespace subscribers.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Subscriber>>> GetTodoItems()
         {
-            return await _context.TodoItems.ToListAsync();
+            return await _context.Subscribers.ToListAsync();
         }
 
-        // GET: api/Subscriber/5
+        // GET: api/Subscriber/{id}, where id is a valid long
+        // matching with a database entry.  
         [HttpGet("{id}")]
-        public async Task<ActionResult<Subscriber>> GetSubscriber(int id)
+        public async Task<ActionResult<Subscriber>> GetSubscriber(long id)
         {
-            var subscriber = await _context.TodoItems.FindAsync(id);
+            var subscriber = await _context.Subscribers.FindAsync(id);
 
             if (subscriber == null)
             {
@@ -42,10 +44,10 @@ namespace subscribers.Controllers
             return subscriber;
         }
 
-        // PUT: api/Subscriber/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // PUT: api/Subscriber/{id}, where id is a valid long
+        // matching with a database entry. 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubscriber(int id, Subscriber subscriber)
+        public async Task<IActionResult> PutSubscriber(long id, Subscriber subscriber)
         {
             if (id != subscriber.SubscriberId)
             {
@@ -74,35 +76,37 @@ namespace subscribers.Controllers
         }
 
         // POST: api/Subscriber
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Subscriber>> PostSubscriber(Subscriber subscriber)
         {
-            _context.TodoItems.Add(subscriber);
+            _context.Subscribers.Add(subscriber);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetSubscriber", new { id = subscriber.SubscriberId }, subscriber);
         }
 
-        // DELETE: api/Subscriber/5
+        // DELETE: api/Subscriber/{id}, where id is a valid long
+        // matching with a database entry. 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubscriber(int id)
+        public async Task<IActionResult> DeleteSubscriber(long id)
         {
-            var subscriber = await _context.TodoItems.FindAsync(id);
+            var subscriber = await _context.Subscribers.FindAsync(id);
             if (subscriber == null)
             {
                 return NotFound();
             }
 
-            _context.TodoItems.Remove(subscriber);
+            _context.Subscribers.Remove(subscriber);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool SubscriberExists(int id)
+        // Returns true if there is an entry in the DB with a 
+        // primary key that matches with the given id. 
+        private bool SubscriberExists(long id)
         {
-            return _context.TodoItems.Any(e => e.SubscriberId == id);
+            return _context.Subscribers.Any(e => e.SubscriberId == id);
         }
     }
 }

@@ -59,6 +59,9 @@ namespace subscribers
             {
                 endpoints.MapControllers();
             });
+
+            // Seed the database in case it's empty
+            ApiDBSeeder.InsertSeed(app);
         }
     }
 }
