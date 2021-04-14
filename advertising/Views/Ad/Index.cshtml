@@ -1,59 +1,66 @@
 @model IEnumerable<advertising.Models.Ad>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Annonser";
 }
 
-<h1>Index</h1>
+<h1>Annonser</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Skapa ny annons</a>
 </p>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Headline)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AdCost)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Advertiser)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
+    <tr>
+        <td>
+            <h3>Headline 1</h3>
+            <p>100 kr</p>
+            <p>Umeå</p>
+        </td>
+        <td>
+            <a asp-action="Edit" asp-route-id="">Edit</a> |
+            <a asp-action="Details" asp-route-id="">Mer information</a> |
+            <a asp-action="Delete" asp-route-id="">Delete</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h3>Headline 2</h3>
+            <p>200 kr</p>
+            <p>Skellefteå</p>
+        </td>
+        <td>
+            <a asp-action="Edit" asp-route-id="">Edit</a> |
+            <a asp-action="Details" asp-route-id="">Mer information</a> |
+            <a asp-action="Delete" asp-route-id="">Delete</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h3>Headline 3</h3>
+            <p>5000 kr</p>
+            <p>Stockholm</p>
+        </td>
+        <td>
+            <a asp-action="Edit" asp-route-id="">Edit</a> |
+            <a asp-action="Details" asp-route-id="">Mer information</a> |
+            <a asp-action="Delete" asp-route-id="">Delete</a>
+        </td>
+    </tr>
+
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Headline)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AdCost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Advertiser.City)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    <h3>@Html.DisplayFor(modelItem => item.Headline)</h3>
+                    <p>@Html.DisplayFor(modelItem => item.AdCost)</p>
+                    <p>@Html.DisplayFor(modelItem => item.Advertiser.City)</p>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Mer information</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

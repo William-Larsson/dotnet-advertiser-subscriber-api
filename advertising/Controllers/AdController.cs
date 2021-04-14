@@ -69,6 +69,23 @@ namespace advertising.Controllers
             return View(ad);
         }
 
+        [HttpPost]
+        public IActionResult GetSubscriberInformation (long id) {
+        // TODO HTTP Get a real result!
+            return View("Create", new CreateAdViewModel ()
+            {
+                Firstname = "Testing",
+                PhoneNumber = "0701111111",
+                DistributionAddress = "Testing Road 1",
+                ZipCode = "99999",
+                City = "Ankeborg",
+                isOrganization = false,
+                Lastname = "Testingsson",
+                SubscriberId = 1
+            }); 
+        }
+
+
         // GET: Ad/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
