@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using advertising.Data;
 using advertising.Models;
+using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace advertising.Controllers
 {
@@ -56,33 +58,65 @@ namespace advertising.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Price,Content,Headline,AdCost,AdvertiserId")] Ad ad)
+        // [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([FromForm] CreateAdViewModel formData)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(ad);
+                var isNewAdvertiser = !(await _context.Advertisers
+                    .AnyAsync(adv => adv.SubscriberId == formData.SubscriberId));
+
+                if (isNewAdvertiser)
+                {
+                    // Insert advertiser into database
+                }
+                else
+                {
+                    // Update existing advertiser entry
+                }
+
+                // Insert ad with the advertiserID
+
+
+                _context.Add(new Ad()); // TODO: change to a real Ad
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AdvertiserId"] = new SelectList(_context.Advertisers, "Id", "City", ad.AdvertiserId);
-            return View(ad);
+            //ViewData["AdvertiserId"] = new SelectList(_context.Advertisers, "Id", "City", ad.AdvertiserId);
+            return View(new Ad()); // TODO: change to a real Ad
         }
 
+        // POST Ad/Create 
+        // Used when user inserts subscriber id number in ordere
+        // to fetch data from the API about that subscriber.  
         [HttpPost]
-        public IActionResult GetSubscriberInformation (long id) {
-        // TODO HTTP Get a real result!
-            return View("Create", new CreateAdViewModel ()
+        public async Task<IActionResult> GetSubscriber (long SubscriberId) {
+            var httpClient = new HttpClientHelper().HttpClient;
+            var response = await httpClient.GetAsync($"/api/Subscriber/{SubscriberId}");
+            Advertiser result = null;
+
+            if (response.IsSuccessStatusCode) 
             {
-                Firstname = "Testing",
-                PhoneNumber = "0701111111",
-                DistributionAddress = "Testing Road 1",
-                ZipCode = "99999",
-                City = "Ankeborg",
-                isOrganization = false,
-                Lastname = "Testingsson",
-                SubscriberId = 1
-            }); 
+                string json = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<Advertiser>(json);
+                return View("Create", new CreateAdViewModel ()
+                {
+                    Firstname = result.Firstname,
+                    Lastname = result.Lastname,
+                    PhoneNumber = result.PhoneNumber,
+                    DistributionAddress = result.DistributionAddress,
+                    ZipCode = result.ZipCode,
+                    City = result.City,
+                    isOrganization = result.isOrganization,
+                    SubscriberId = result.SubscriberId
+                    // TODO: Do I need personal ID? 
+                });
+            }
+            else 
+            {
+                ViewBag.invalidSubscriberId = $"* Ingen prenumerant kunde hittas med ID {SubscriberId}"; 
+                return View("Create"); 
+            } 
         }
 
 

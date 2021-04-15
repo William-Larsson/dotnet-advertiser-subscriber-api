@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using advertising.Data;
 
 namespace advertising.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210415074647_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,10 +101,6 @@ namespace advertising.Migrations
                     b.Property<long?>("OrganizationNumber")
                         .HasColumnType("INTEGER")
                         .HasColumnName("adv_organization_number");
-
-                    b.Property<long?>("PersonalId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("adv_personal_id");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()

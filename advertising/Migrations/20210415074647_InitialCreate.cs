@@ -12,7 +12,6 @@ namespace advertising.Migrations
                 {
                     adv_advertiser_id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    adv_name = table.Column<string>(type: "TEXT", nullable: false),
                     adv_phone_number = table.Column<string>(type: "TEXT", nullable: false),
                     adv_distribution_address = table.Column<string>(type: "TEXT", nullable: false),
                     adv_distribution_zip_code = table.Column<string>(type: "TEXT", nullable: false),
@@ -21,8 +20,10 @@ namespace advertising.Migrations
                     adv_invoice_zip_code = table.Column<string>(type: "TEXT", nullable: false),
                     adv_invoice_city = table.Column<string>(type: "TEXT", nullable: false),
                     adv_is_organization = table.Column<bool>(type: "INTEGER", nullable: false),
+                    adv_first_name = table.Column<string>(type: "TEXT", nullable: true),
                     adv_last_name = table.Column<string>(type: "TEXT", nullable: true),
                     adv_subscriber_id = table.Column<long>(type: "INTEGER", nullable: true),
+                    adv_organization_name = table.Column<string>(type: "TEXT", nullable: true),
                     adv_organization_number = table.Column<long>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>

@@ -31,12 +31,15 @@
     <div class="col-md-4">
 
         <!-- Form for getting subscriber data from API -->
-        <form asp-action="GetSubscriberInformation">
+        <form asp-action="GetSubscriber">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="SubscriberId" class="control-label"></label>
                 <input asp-for="SubscriberId" class="form-control" />
                 <span asp-validation-for="SubscriberId" class="text-danger"></span>
+                @if (ViewBag.invalidSubscriberId != "") {
+                    <span class="text-danger">@ViewBag.invalidSubscriberId</span>
+                }
             </div>
             <div class="form-group">
                 <input type="submit" value="Hämta information" class="btn btn-primary" />
@@ -102,6 +105,10 @@
                         <input asp-for="City" class="form-control" />
                         <span asp-validation-for="City" class="text-danger"></span>
                     </div>
+
+                    @Html.HiddenFor(model => model.SubscriberId)
+
+
                     <div class="form-group">
                         <input type="submit" value="Skapa annons" class="btn btn-primary" />
                     </div>

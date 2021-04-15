@@ -9,8 +9,8 @@ using advertising.Data;
 namespace advertising.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20210408171706_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20210415075151_AddedPersonalId")]
+    partial class AddedPersonalId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -71,6 +71,10 @@ namespace advertising.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("adv_distribution_address");
 
+                    b.Property<string>("Firstname")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("adv_first_name");
+
                     b.Property<string>("InvoiceAddress")
                         .IsRequired()
                         .HasColumnType("TEXT")
@@ -90,14 +94,17 @@ namespace advertising.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("adv_last_name");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
+                    b.Property<string>("OrganizationName")
                         .HasColumnType("TEXT")
-                        .HasColumnName("adv_name");
+                        .HasColumnName("adv_organization_name");
 
                     b.Property<long?>("OrganizationNumber")
                         .HasColumnType("INTEGER")
                         .HasColumnName("adv_organization_number");
+
+                    b.Property<long?>("PersonalId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("adv_personal_id");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()

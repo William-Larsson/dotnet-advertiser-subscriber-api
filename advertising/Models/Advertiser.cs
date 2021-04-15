@@ -15,10 +15,6 @@ namespace advertising.Models
         public long Id { get; set; }
 
         [Required]
-        [Column("adv_name")]
-        public string Name { get; set; }
-
-        [Required]
         [Column("adv_phone_number")]
         public string PhoneNumber { get; set; }
 
@@ -57,14 +53,25 @@ namespace advertising.Models
         [Column("adv_is_organization")]
         public bool isOrganization { get; set; } // true if organization
 
+        // If not an organization
+        [Column("adv_first_name")]
+        public string Firstname { get; set; } 
+
         [Column("adv_last_name")] 
-        public string Lastname { get; set; } // If not an organization
+        public string Lastname { get; set; } 
+
+        [Column("adv_personal_id")] 
+        public long? PersonalId { get; set; } 
 
         [Column("adv_subscriber_id")]
-        public long? SubscriberId { get; set; } // If not an organization
+        public long? SubscriberId { get; set; } 
+
+        // If is an organization
+        [Column("adv_organization_name")]
+        public string OrganizationName { get; set; }
 
         [Column("adv_organization_number")]
-        public long? OrganizationNumber { get; set; } // If is an organization
+        public long? OrganizationNumber { get; set; } 
 
 
         // Database on-to-many relation with Ad. 
