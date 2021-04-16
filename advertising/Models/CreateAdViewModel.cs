@@ -66,6 +66,10 @@ namespace advertising.Models
         public string Lastname { get; set; }
 
         // Must be validated manually!
+        [Display(Name = "Personnummer", Prompt = "Ange personnummer")]
+        public long PersonalId { get; set; }
+
+        // Must be validated manually!
         [Display(Name = "Företagsnamn", Prompt = "Ange företagsnamn")]
         public string OrganizationName { get; set; }
 
@@ -76,5 +80,11 @@ namespace advertising.Models
         // Must be validated manually!
         [Display(Name = "Organisationsnummer", Prompt = "Ange organisationsnummer")]
         public long? OrganizationNumber { get; set; }
+
+
+        // Used to check if the user wants to change the subscriber 
+        // data for in the subscriber API
+        [Display(Name = "Uppdatera information för prenumeration", Prompt = "Uppdatera information")]
+        public bool updateSubscriberAPIInfo { get; set; }
     }
 }

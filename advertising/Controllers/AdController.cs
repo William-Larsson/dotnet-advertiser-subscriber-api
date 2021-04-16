@@ -15,6 +15,8 @@ namespace advertising.Controllers
     public class AdController : Controller
     {
         private readonly AppDBContext _context;
+        private readonly int _adPriceSubscriber = 0;
+        private readonly int _adPriceCompany = 40;
 
         public AdController(AppDBContext context)
         {
@@ -48,7 +50,7 @@ namespace advertising.Controllers
         }
 
         // GET: Ad/Create
-        public IActionResult Create()
+        public IActionResult CreateAd()
         {
             ViewData["AdvertiserId"] = new SelectList(_context.Advertisers, "Id", "City");
             return View();
@@ -59,63 +61,101 @@ namespace advertising.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromForm] CreateAdViewModel formData)
+        public async Task<IActionResult> CreateAdSubscriber([FromForm] CreateAdViewModel formData)
         {
             if (ModelState.IsValid)
             {
-                var isNewAdvertiser = !(await _context.Advertisers
-                    .AnyAsync(adv => adv.SubscriberId == formData.SubscriberId));
+                Advertiser existingAdvertiser = _context.Advertisers
+                    .Where(adv => adv.SubscriberId == formData.SubscriberId)
+                    .FirstOrDefault();
 
-                if (isNewAdvertiser)
+                Advertiser advertiser;    
+
+                if (existingAdvertiser == null) 
                 {
-                    // Insert advertiser into database
+                    advertiser = new Advertiser () // OBS!!
+                    {
+                        Id = existingAdvertiser == null ? 0 : existingAdvertiser.Id,
+                        PhoneNumber = formData.PhoneNumber,
+                        DistributionAddress = formData.DistributionAddress,
+                        ZipCode = formData.ZipCode,
+                        City = formData.City,
+                        InvoiceAddress = formData.DistributionAddress,
+                        InvoiceZipCode = formData.ZipCode,
+                        InvoiceCity = formData.City,
+                        isOrganization = false,
+                        PersonalId = formData.PersonalId,
+                        Firstname = formData.Firstname,
+                        Lastname = formData.Lastname,
+                        SubscriberId = formData.SubscriberId
+                    };
+                    _context.Add(advertiser); // Insert new advertiser into database
                 }
                 else
-                {
-                    // Update existing advertiser entry
+                {            
+                    advertiser = existingAdvertiser; // OBS!!
+                    existingAdvertiser.PhoneNumber = formData.PhoneNumber;
+                    existingAdvertiser.DistributionAddress = formData.DistributionAddress;
+                    existingAdvertiser.ZipCode = formData.ZipCode;
+                    existingAdvertiser.City = formData.City;
+                    existingAdvertiser.InvoiceAddress = formData.DistributionAddress;
+                    existingAdvertiser.InvoiceZipCode = formData.ZipCode;
+                    existingAdvertiser.InvoiceCity = formData.City;
+                    existingAdvertiser.PersonalId = formData.PersonalId;
+                    existingAdvertiser.Firstname = formData.Firstname;
+                    existingAdvertiser.Lastname = formData.Lastname;
+
+                    _context.Entry(existingAdvertiser).State = EntityState.Modified; // Update existing advertiser entry
                 }
 
-                // Insert ad with the advertiserID
-
-
-                _context.Add(new Ad()); // TODO: change to a real Ad
                 await _context.SaveChangesAsync();
+
+                _context.Add(new Ad() // Insert ad with the advertiserID
+                {
+                    Price = formData.Price,
+                    Content = formData.Content,
+                    Headline = formData.Headline,
+                    AdCost = _adPriceSubscriber,
+                    AdvertiserId = advertiser.Id
+                }); 
+
+                await _context.SaveChangesAsync();
+
+                // DB operations are done, check if subscriber data should be updated
+                if (formData.updateSubscriberAPIInfo)
+                {
+                    var httpClientHelper = new HttpClientHelper();
+                    httpClientHelper.UpdateSubscriber(formData);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
-            //ViewData["AdvertiserId"] = new SelectList(_context.Advertisers, "Id", "City", ad.AdvertiserId);
-            return View(new Ad()); // TODO: change to a real Ad
+                
+            return View(); 
+        }
+
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public IActionResult CreateAdCompany([FromForm] CreateAdViewModel formData)
+        {
+            return View();
         }
 
         // POST Ad/Create 
-        // Used when user inserts subscriber id number in ordere
+        // Used when user inserts subscriber id number in order
         // to fetch data from the API about that subscriber.  
         [HttpPost]
-        public async Task<IActionResult> GetSubscriber (long SubscriberId) {
-            var httpClient = new HttpClientHelper().HttpClient;
-            var response = await httpClient.GetAsync($"/api/Subscriber/{SubscriberId}");
-            Advertiser result = null;
+        public IActionResult GetSubscriber (long subscriberId) {
+            var httpClientHelper = new HttpClientHelper();
+            var subscriber = httpClientHelper.GetSubscriber(subscriberId).Result;
 
-            if (response.IsSuccessStatusCode) 
-            {
-                string json = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<Advertiser>(json);
-                return View("Create", new CreateAdViewModel ()
-                {
-                    Firstname = result.Firstname,
-                    Lastname = result.Lastname,
-                    PhoneNumber = result.PhoneNumber,
-                    DistributionAddress = result.DistributionAddress,
-                    ZipCode = result.ZipCode,
-                    City = result.City,
-                    isOrganization = result.isOrganization,
-                    SubscriberId = result.SubscriberId
-                    // TODO: Do I need personal ID? 
-                });
-            }
+            if (subscriber != null) 
+                return View("CreateAd", subscriber);
             else 
             {
-                ViewBag.invalidSubscriberId = $"* Ingen prenumerant kunde hittas med ID {SubscriberId}"; 
-                return View("Create"); 
+                ViewBag.invalidSubscriberId = $"* Ingen prenumerant kunde hittas med ID {subscriberId}"; 
+                return View("CreateAd"); 
             } 
         }
 

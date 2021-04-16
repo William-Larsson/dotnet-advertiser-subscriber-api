@@ -7,7 +7,7 @@
 <h1>Annonser</h1>
 
 <p>
-    <a asp-action="Create">Skapa ny annons</a>
+    <a asp-action="CreateAd">Skapa ny annons</a>
 </p>
 <table class="table">
     <tr>
@@ -49,10 +49,11 @@
 
     <tbody>
         @foreach (var item in Model) {
+            // TODO: Change "kr" in Price if implementing the bonus assignment. 
             <tr>
                 <td>
                     <h3>@Html.DisplayFor(modelItem => item.Headline)</h3>
-                    <p>@Html.DisplayFor(modelItem => item.AdCost)</p>
+                    <p>@Html.DisplayFor(modelItem => item.Price) kr</p> 
                     <p>@Html.DisplayFor(modelItem => item.Advertiser.City)</p>
                 </td>
                 <td>

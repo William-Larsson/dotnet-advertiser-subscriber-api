@@ -36,7 +36,6 @@
             <div class="form-group">
                 <label asp-for="SubscriberId" class="control-label"></label>
                 <input asp-for="SubscriberId" class="form-control" />
-                <span asp-validation-for="SubscriberId" class="text-danger"></span>
                 @if (ViewBag.invalidSubscriberId != "") {
                     <span class="text-danger">@ViewBag.invalidSubscriberId</span>
                 }
@@ -49,7 +48,7 @@
         <!-- Form with subscriber data --> 
         @{
             if (Model != null){
-                <form asp-action="Create">
+                <form asp-action="CreateAdSubscriber">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     
                     <div class="form-group">
@@ -68,6 +67,12 @@
                         <label asp-for="Price" class="control-label"></label>
                         <input asp-for="Price" class="form-control" />
                         <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PersonalId" class="control-label"></label>
+                        <input asp-for="PersonalId" class="form-control" />
+                        <span asp-validation-for="PersonalId" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
@@ -106,6 +111,9 @@
                         <span asp-validation-for="City" class="text-danger"></span>
                     </div>
 
+                    <label asp-for="updateSubscriberAPIInfo" class="control-label"></label>
+                    @Html.EditorFor(model => model.updateSubscriberAPIInfo)
+
                     @Html.HiddenFor(model => model.SubscriberId)
 
 
@@ -121,7 +129,7 @@
 <!--Company form-->
 <div id="Form Comp" class="row" style="@(Model != null && Model.isOrganization == true ? "display:block" : "display:none")">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="CreateAdCompany">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group">

@@ -27,8 +27,9 @@ namespace advertising
         {
             services.AddControllersWithViews();
 
-            services.AddDbContext<AppDBContext>(options => 
-                options.UseSqlite(Configuration.GetConnectionString("AppDBContext")));
+            services.AddDbContext<AppDBContext>(options => options
+                .UseSqlite(Configuration.GetConnectionString("AppDBContext"))
+                .EnableSensitiveDataLogging());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
