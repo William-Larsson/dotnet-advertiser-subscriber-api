@@ -62,6 +62,7 @@ namespace subscribers
 
             // Seed the database in case it's empty
             ApiDBSeeder.InsertSeed(app);
+            DatabaseXML.SerializeXML(app, "SubscriberOutput.xml");
         }
     }
 }
