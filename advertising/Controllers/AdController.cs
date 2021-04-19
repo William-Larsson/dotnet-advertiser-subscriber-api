@@ -15,8 +15,8 @@ namespace advertising.Controllers
     public class AdController : Controller
     {
         private readonly AppDBContext _context;
-        private readonly int _adPriceSubscriber = 0;
-        private readonly int _adPriceCompany = 40;
+        private const int _adPriceSubscriber = 0;
+        private const int _adPriceCompany = 40;
 
         public AdController(AppDBContext context)
         {
@@ -24,6 +24,8 @@ namespace advertising.Controllers
         }
 
         // GET: Ad
+        // Loads the Index page. 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var appDBContext = _context.Ads.Include(a => a.Advertiser);
@@ -31,6 +33,7 @@ namespace advertising.Controllers
         }
 
         // GET: Ad/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -50,15 +53,36 @@ namespace advertising.Controllers
         }
 
         // GET: Ad/Create
+        [HttpGet]
         public IActionResult CreateAd()
         {
             ViewData["AdvertiserId"] = new SelectList(_context.Advertisers, "Id", "City");
             return View();
         }
 
+        // POST Ad/Create 
+        // Used when user inserts subscriber id number in order
+        // to fetch data from the API about that subscriber.  
+        [HttpPost]
+        public IActionResult GetSubscriber (long subscriberId) {
+            var httpClientHelper = new HttpClientHelper();
+            var subscriber = httpClientHelper.GetSubscriber(subscriberId).Result;
+
+            if (subscriber != null) 
+                return View("CreateAd", subscriber);
+            else 
+            {
+                ViewBag.invalidSubscriberId = $"* Ingen prenumerant kunde hittas med ID {subscriberId}"; 
+                return View("CreateAd"); 
+            } 
+        }
+
         // POST: Ad/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Creates an ad when the advertiser is a subscriber from the API. 
+        // If the user hasn't made an ad before, creates a new advertiser
+        // otherwise updates the available info.
+        // If selected in the user form, the API-info will also be updated
+        // through the help of the HttpClientHelper-class. 
         [HttpPost]
         // [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateAdSubscriber([FromForm] CreateAdViewModel formData)
@@ -131,34 +155,76 @@ namespace advertising.Controllers
                 return RedirectToAction(nameof(Index));
             }
                 
-            return View(); 
+            return View("CreateAd", formData);
         }
 
 
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        public IActionResult CreateAdCompany([FromForm] CreateAdViewModel formData)
+        public async Task<IActionResult> CreateAdCompany([FromForm] CreateAdViewModel formData)
         {
-            return View();
-        }
-
-        // POST Ad/Create 
-        // Used when user inserts subscriber id number in order
-        // to fetch data from the API about that subscriber.  
-        [HttpPost]
-        public IActionResult GetSubscriber (long subscriberId) {
-            var httpClientHelper = new HttpClientHelper();
-            var subscriber = httpClientHelper.GetSubscriber(subscriberId).Result;
-
-            if (subscriber != null) 
-                return View("CreateAd", subscriber);
-            else 
+            formData.isOrganization = true;
+            
+            if (ModelState.IsValid)
             {
-                ViewBag.invalidSubscriberId = $"* Ingen prenumerant kunde hittas med ID {subscriberId}"; 
-                return View("CreateAd"); 
-            } 
-        }
+                Advertiser existingAdvertiser = _context.Advertisers
+                    .Where(adv => adv.OrganizationNumber == formData.OrganizationNumber)
+                    .FirstOrDefault();
 
+                Advertiser advertiser;
+
+                if (existingAdvertiser == null) 
+                {
+                    advertiser = new Advertiser () // OBS!!
+                    {
+                        Id = 0,
+                        PhoneNumber = formData.PhoneNumber,
+                        DistributionAddress = formData.DistributionAddress,
+                        ZipCode = formData.ZipCode,
+                        City = formData.City,
+                        InvoiceAddress = formData.InvoiceAddress == null ? formData.DistributionAddress : formData.InvoiceAddress,
+                        InvoiceZipCode = formData.InvoiceZipCode == null ? formData.ZipCode : formData.InvoiceZipCode,
+                        InvoiceCity = formData.InvoiceCity == null ? formData.City : formData.InvoiceCity,
+                        isOrganization = true,
+                        OrganizationName = formData.OrganizationName,
+                        OrganizationNumber = formData.OrganizationNumber,
+                    };
+                    _context.Add(advertiser); // Insert new advertiser into database
+                }
+                else
+                {            
+                    advertiser = existingAdvertiser; // OBS!!
+                    existingAdvertiser.PhoneNumber = formData.PhoneNumber;
+                    existingAdvertiser.DistributionAddress = formData.DistributionAddress;
+                    existingAdvertiser.ZipCode = formData.ZipCode;
+                    existingAdvertiser.City = formData.City;
+                    existingAdvertiser.InvoiceAddress = formData.InvoiceAddress == null ? formData.DistributionAddress : formData.InvoiceAddress;
+                    existingAdvertiser.InvoiceZipCode = formData.InvoiceZipCode == null ? formData.ZipCode : formData.InvoiceZipCode;
+                    existingAdvertiser.InvoiceCity = formData.InvoiceCity == null ? formData.City : formData.InvoiceCity;
+                    existingAdvertiser.isOrganization = true;
+                    existingAdvertiser.OrganizationName = formData.OrganizationName;
+                    existingAdvertiser.OrganizationNumber = formData.OrganizationNumber;
+
+                    _context.Entry(existingAdvertiser).State = EntityState.Modified; // Update existing advertiser entry
+                }
+
+                await _context.SaveChangesAsync();
+
+                _context.Add(new Ad() // Insert ad with the advertiserID
+                {
+                    Price = formData.Price,
+                    Content = formData.Content,
+                    Headline = formData.Headline,
+                    AdCost = _adPriceCompany,
+                    AdvertiserId = advertiser.Id
+                }); 
+
+                await _context.SaveChangesAsync();
+                RedirectToAction(nameof(Index));
+            }
+
+            return View("CreateAd", formData);
+        }
 
         // GET: Ad/Edit/5
         public async Task<IActionResult> Edit(long? id)

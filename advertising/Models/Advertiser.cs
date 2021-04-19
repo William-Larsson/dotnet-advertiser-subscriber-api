@@ -30,6 +30,7 @@ namespace advertising.Models
 
         [Required]
         [Column("adv_distribution_city")]
+        [Display(Name="Stad")]
         public string City { get; set; }
 
 

@@ -10,56 +10,32 @@
     <a asp-action="CreateAd">Skapa ny annons</a>
 </p>
 <table class="table">
-    <tr>
-        <td>
-            <h3>Headline 1</h3>
-            <p>100 kr</p>
-            <p>Umeå</p>
-        </td>
-        <td>
-            <a asp-action="Edit" asp-route-id="">Edit</a> |
-            <a asp-action="Details" asp-route-id="">Mer information</a> |
-            <a asp-action="Delete" asp-route-id="">Delete</a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <h3>Headline 2</h3>
-            <p>200 kr</p>
-            <p>Skellefteå</p>
-        </td>
-        <td>
-            <a asp-action="Edit" asp-route-id="">Edit</a> |
-            <a asp-action="Details" asp-route-id="">Mer information</a> |
-            <a asp-action="Delete" asp-route-id="">Delete</a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <h3>Headline 3</h3>
-            <p>5000 kr</p>
-            <p>Stockholm</p>
-        </td>
-        <td>
-            <a asp-action="Edit" asp-route-id="">Edit</a> |
-            <a asp-action="Details" asp-route-id="">Mer information</a> |
-            <a asp-action="Delete" asp-route-id="">Delete</a>
-        </td>
-    </tr>
-
+    <thead>
+        <th>Översikt</th>
+        <th>Säljes av</th>
+        <th>Mer information</th>
+    </thead>
     <tbody>
         @foreach (var item in Model) {
-            // TODO: Change "kr" in Price if implementing the bonus assignment. 
+            // TODO: Change "SEK" in Price if implementing the bonus assignment. 
             <tr>
                 <td>
                     <h3>@Html.DisplayFor(modelItem => item.Headline)</h3>
-                    <p>@Html.DisplayFor(modelItem => item.Price) kr</p> 
+                    <p>@Html.DisplayFor(modelItem => item.Price) SEK</p> 
                     <p>@Html.DisplayFor(modelItem => item.Advertiser.City)</p>
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Mer information</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    @if (!item.Advertiser.isOrganization)
+                    {
+                        <p>Prenumerant:</p>
+                        <p>@Html.DisplayFor(modelItem => item.Advertiser.Firstname)</p> 
+                    } else {
+                        <p>Företag:</p>
+                        <p>@Html.DisplayFor(modelItem => item.Advertiser.OrganizationName)</p> 
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Läs mer</a>
                 </td>
             </tr>
         }

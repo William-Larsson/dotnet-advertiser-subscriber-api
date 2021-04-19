@@ -152,13 +152,15 @@
 
             <div class="form-group">
                 <label asp-for="OrganizationName" class="control-label"></label>
-                <input asp-for="OrganizationName" class="form-control" />
+                <!--Note! data-val-required can be used instead of [Required] in the model! -->
+                <input asp-for="OrganizationName" class="form-control" data-val-required="The OrganizationName field is required."/>
                 <span asp-validation-for="OrganizationName" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="OrganizationNumber" class="control-label"></label>
-                <input asp-for="OrganizationNumber" class="form-control" />
+                <!--Note! data-val-required can be used instead of [Required] in the model! -->
+                <input asp-for="OrganizationNumber" class="form-control" data-val-required="The OrganizationNumber field is required."/>
                 <span asp-validation-for="OrganizationNumber" class="text-danger"></span>
             </div>
 
@@ -170,7 +172,7 @@
 
             <div class="form-group">
                 <label asp-for="DistributionAddress" class="control-label"></label>
-                <input asp-for="DistributionAddress" class="form-control" />
+                <input asp-for="DistributionAddress" class="form-control"/>
                 <span asp-validation-for="DistributionAddress" class="text-danger"></span>
             </div>
 
@@ -212,7 +214,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Tillbaka till annonser</a>
 </div>
 
 <script>

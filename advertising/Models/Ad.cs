@@ -15,18 +15,22 @@ namespace advertising.Models
 
         [Required]
         [Column("ad_price")]
+        [Display(Name = "Pris")]
         public int Price { get; set; } // Varans pris
 
         [Required]
         [Column("ad_content")]
+        [Display(Name = "Innehåll")]
         public string Content { get; set; } // Innehåll
 
         [Required]
         [Column("ad_headline")]
+        [Display(Name = "Rubrik")]
         public string Headline { get; set; } // Rubrik
 
         [Required]
         [Column("ad_ad_cost")]
+        [Display(Name = "Annonskostnad")]
         public int AdCost { get; set; } // Annonspris
 
 
@@ -35,6 +39,7 @@ namespace advertising.Models
         [ForeignKey("ad_fk_advertiser_id")]
         public long AdvertiserId { get; set; } // Foreign Key
 
+        [Display(Name = "Annonsör")]
         public Advertiser Advertiser { get; set; }
     }
 }

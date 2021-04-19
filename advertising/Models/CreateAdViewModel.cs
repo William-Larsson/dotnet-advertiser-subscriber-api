@@ -18,7 +18,7 @@ namespace advertising.Models
         public string Content { get; set; }
 
         [Required]
-        [Display(Name = "Pris", Prompt = "Ange annonsens pris")]
+        [Display(Name = "Pris (SEK)", Prompt = "Ange annonsens pris")]
         public int Price { get; set; }
 
         // TODO: Do I need AdvertiserId etc?
@@ -78,6 +78,8 @@ namespace advertising.Models
         public long? SubscriberId { get; set; }
 
         // Must be validated manually!
+        //[Required]
+        [Range(100000000000, 999999999999)]
         [Display(Name = "Organisationsnummer", Prompt = "Ange organisationsnummer")]
         public long? OrganizationNumber { get; set; }
 
