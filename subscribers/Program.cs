@@ -15,11 +15,6 @@ namespace subscribers
     {
         public static void Main(string[] args)
         {
-            // Load in the environment variabels using the DotEnv helper class. 
-            var root = Directory.GetCurrentDirectory();
-            var envPath = Path.Combine(root, ".env");
-            DotEnv.Load(envPath);
-
             CreateHostBuilder(args).Build().Run();
         }
 

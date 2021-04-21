@@ -9,6 +9,27 @@
 <p>
     <a asp-action="CreateAd">Skapa ny annons</a>
 </p>
+
+<form asp-action="Index">
+    <fieldset> <select id="Currency" name="Currency">
+
+    <option value="" selected="selected">--- Välj valuta ---</option>
+
+    <option value="SEK">Svensk Krona</option>
+
+    <option value="USD">US Dollar</option>
+
+    <option value="EUR">Euro</option>
+
+    </select>
+
+    <input type="submit" value="Ändra valuta" />
+
+    </fieldset>
+</form>
+
+<br>
+
 <table class="table">
     <thead>
         <th>Översikt</th>
@@ -17,11 +38,16 @@
     </thead>
     <tbody>
         @foreach (var item in Model) {
-            // TODO: Change "SEK" in Price if implementing the bonus assignment. 
             <tr>
                 <td>
                     <h3>@Html.DisplayFor(modelItem => item.Headline)</h3>
-                    <p>@Html.DisplayFor(modelItem => item.Price) SEK</p> 
+                    @if (ViewBag.currencyName != null && ViewBag.exchangeRate != null)
+                    {
+                        <p>@(Math.Ceiling(item.Price * ViewBag.exchangeRate)) @ViewBag.currencyName</p>
+                    }
+                    else {
+                        <p>@Html.DisplayFor(modelItem => item.Price) SEK</p>
+                    }
                     <p>@Html.DisplayFor(modelItem => item.Advertiser.City)</p>
                 </td>
                 <td>

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace subscribers.Models
+namespace advertising.Models
 {
     // A class for loading in environment variables from .env 
     public class DotEnv

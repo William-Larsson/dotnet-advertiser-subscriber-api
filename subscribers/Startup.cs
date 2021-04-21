@@ -22,12 +22,7 @@ namespace subscribers
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration =
-                new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json", true)
-                    .AddEnvironmentVariables()
-                    .Build();
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -71,9 +66,6 @@ namespace subscribers
             ApiDBSeeder.InsertSeed(app);
             //DatabaseXML.SerializeXML(app, "SubscriberOutput.xml");
             //DatabaseXML.DeserializeXML(app, "SubscriberInput.xml");
-
-            var test = new CurrencyConverter();
-            test.GetExchangeRate("SEK", "EUR");
         }
     }
 }

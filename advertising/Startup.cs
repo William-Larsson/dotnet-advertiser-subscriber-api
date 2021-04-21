@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using advertising.Data;
+using advertising.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -17,7 +19,12 @@ namespace advertising
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration =
+                new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", true)
+                    .AddEnvironmentVariables()
+                    .Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -58,6 +65,9 @@ namespace advertising
                     name: "default",
                     pattern: "{controller=Ad}/{action=Index}/{id?}");
             });
+
+            var test = new CurrencyConverter();
+            test.GetExchangeRate("SEK", "EUR");
         }
     }
 }

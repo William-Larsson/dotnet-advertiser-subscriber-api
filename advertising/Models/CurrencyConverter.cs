@@ -1,13 +1,18 @@
 using System;
+using System.IO;
 using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace subscribers.Models
+namespace advertising.Models
 {
     public class CurrencyConverter
     {
         // Rapid API info for API calls. 
-        public string rapidAPIKey = Environment.GetEnvironmentVariable("RAPID_API_KEY");
-        public string rapidAPIHost = Environment.GetEnvironmentVariable("RAPID_API_HOST");
+        public string APIKey = Environment.GetEnvironmentVariable("API_KEY");
+        public string APIHost = Environment.GetEnvironmentVariable("API_HOST");
         public HttpClient client { get; set; }
 
         // Constructor, setup Http client with SSL certificate. 
@@ -20,23 +25,20 @@ namespace subscribers.Models
         }
 
         // TODO Return convertion rate 
-        public async void GetExchangeRate(string from, string to)
+        public async Task<double> GetExchangeRate(string from, string to)
         {
+            var fromTo = $"{from}_{to}";
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri($"https://alpha-vantage.p.rapidapi.com/query?to_currency={to}&function=CURRENCY_EXCHANGE_RATE&from_currency={from}"),
-                Headers =
-                {
-                    { "x-rapidapi-key", rapidAPIKey },
-                    { "x-rapidapi-host", rapidAPIHost },
-                },
+                RequestUri = new Uri($"{APIHost}?q={from}_{to}&compact=ultra&apiKey={APIKey}"),
             };
             using (var response = await client.SendAsync(request))
             {
                 response.EnsureSuccessStatusCode();
-                var body = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(body);
+                string json = await response.Content.ReadAsStringAsync();
+                var data = (JObject)JsonConvert.DeserializeObject(json);
+                return (double)data[fromTo];
             }
         }
     }

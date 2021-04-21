@@ -32,6 +32,18 @@ namespace advertising.Controllers
             return View(await appDBContext.ToListAsync());
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Index(string currency)
+        {
+            var converter = new CurrencyConverter();
+            var exchangeRate = converter.GetExchangeRate("SEK", currency).Result;
+
+            ViewBag.currencyName = currency;
+            ViewBag.exchangeRate = exchangeRate;
+            var appDBContext = _context.Ads.Include(a => a.Advertiser);
+            return View(await appDBContext.ToListAsync());
+        }
+
         // GET: Ad/Details/5
         [HttpGet]
         public async Task<IActionResult> Details(long? id)
