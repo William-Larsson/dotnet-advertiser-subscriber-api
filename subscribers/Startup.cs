@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using subscribers.Data;
+using subscribers.Models;
 
 namespace subscribers
 {
@@ -20,7 +22,12 @@ namespace subscribers
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration =
+                new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", true)
+                    .AddEnvironmentVariables()
+                    .Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -62,7 +69,11 @@ namespace subscribers
 
             // Seed the database in case it's empty
             ApiDBSeeder.InsertSeed(app);
-            DatabaseXML.SerializeXML(app, "SubscriberOutput.xml");
+            //DatabaseXML.SerializeXML(app, "SubscriberOutput.xml");
+            //DatabaseXML.DeserializeXML(app, "SubscriberInput.xml");
+
+            var test = new CurrencyConverter();
+            test.GetExchangeRate("SEK", "EUR");
         }
     }
 }

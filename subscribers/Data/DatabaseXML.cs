@@ -17,9 +17,27 @@ namespace subscribers.Data
     {
         // Parses an XML-file and inserts the content into
         // the subscriber table. 
-        public static void DeserializeXML() 
+        public static async void DeserializeXML(IApplicationBuilder builder, string filename) 
         {
-            return;
+            using (var serviceScope = builder.ApplicationServices.CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<ApiDBContext>();
+                List<Subscriber> subs = new List<Subscriber>();
+                var xmlSerializer = new System.Xml.Serialization.XmlSerializer(subs.GetType());
+
+                using (var fileStream = new FileStream(filename, FileMode.Open))
+                {
+                    subs = (List<Subscriber>) xmlSerializer.Deserialize(fileStream);
+                }
+
+                if (subs.Count != 0)
+                {
+                    await context.Subscribers.AddRangeAsync(subs);
+                    await context.SaveChangesAsync();
+                }
+                
+                Console.WriteLine("Done");
+            }
         }
 
         // Creates a file containing the data from the Subscriber table
@@ -39,5 +57,7 @@ namespace subscribers.Data
                 xmlWriter.Close();
             }
         }
+
+
     }
 }
